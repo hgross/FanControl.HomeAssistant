@@ -1,0 +1,7 @@
+GET http://smarthome-infrastructure.home.arpa:8123/api/states/sensor.office_hue_motion_temperature HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer xxxinsertherexxx
+
+GET http://smarthome-infrastructure.home.arpa:8123/api/states/sensor.thermostat_office_actual_temperature HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer xxx
