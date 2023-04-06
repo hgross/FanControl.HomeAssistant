@@ -16,6 +16,8 @@ From within the root directory
 dotnet run --project TestProgram/TestProgram.csproj
 ```
 
+Pick up the release build from the `out/FanControl.HomeAssistant` directory and place it within your FanControl installation's plugin folder (`FanControl/Plugins`).
+Alternatively the build script builds a readily usable portable FanControl configuration within the `out/FanControlDevBuild` directory (for dev purposes).
 
 
 ## Tools
