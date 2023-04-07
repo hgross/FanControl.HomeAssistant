@@ -10,14 +10,14 @@
 
 <p float="left">
   <a href="./doc/assets/FanControl.HomeAssistant_AmbientMixSensorExample.png">
-    <img src="./doc/assets/FanControl.HomeAssistant_AmbientMixSensorExample.png" width="200" />
+    <img src="./doc/assets/FanControl.HomeAssistant_AmbientMixSensorExample.png" width="300" />
   </a>
-  <a href="./doc/assets/FanControl.HomeAssistant_AmbientMixSensorExample2.png"><img src="./doc/assets/FanControl.HomeAssistant_AmbientMixSensorExample2.png" width="200" /></a>
+  <a href="./doc/assets/FanControl.HomeAssistant_AmbientMixSensorExample2.png"><img src="./doc/assets/FanControl.HomeAssistant_AmbientMixSensorExample2.png" width="300" /></a>
 </p>
 
 <p float="left">
-  <a href="./doc/assets/FanControl.HomeAssistant_Settings1.png"><img src="./doc/assets/FanControl.HomeAssistant_Settings1.png" width="200" /></a>
-  <a href="./doc/assets/FanControl.HomeAssistant_Settings2.png"><img src="./doc/assets/FanControl.HomeAssistant_Settings2.png" width="200" /></a>
+  <a href="./doc/assets/FanControl.HomeAssistant_Settings1.png"><img src="./doc/assets/FanControl.HomeAssistant_Settings1.png" width="300" /></a>
+  <a href="./doc/assets/FanControl.HomeAssistant_Settings2.png"><img src="./doc/assets/FanControl.HomeAssistant_Settings2.png" width="300" /></a>
 </p>
 
 ## Installation
