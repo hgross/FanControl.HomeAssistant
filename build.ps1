@@ -4,6 +4,7 @@ $plugin_target_dir = ".\out\FanControl.HomeAssistant"
 $fc_devbuild_target_dir = ".\out\FanControlDevBuild"
 $fc_devbuild_plugin_target_dir  = "${fc_devbuild_target_dir}\Plugins"
 $fc_release_input_dir = ".\devbuild\FanControl"
+$release_package_target_dir = ".\out\release_package"
 
 ############
 ##  Clean
@@ -34,3 +35,21 @@ dotnet build -c release
 Remove-Item "${assembly_path_release}\FanControl.Plugins.dll" -Recurse
 ## copy built artifacts into target dir
 Copy-Item $assembly_path_release -Destination $plugin_target_dir -Recurse -Force
+
+
+############
+##  Package release
+############
+# Determine package name
+$gitHash = (git rev-parse --short HEAD)
+$gitTag = (git describe --exact-match --tags 2>&1 | Out-Null)
+if($gitTag) {
+    $version = $gitTag;
+} else {
+    $version = $gitHash;
+}
+$release_package_file_name = "FanControl.HomeAssistant_" + $version + ".zip"
+$release_package_abspath = $release_package_target_dir + "\" + $release_package_file_name
+
+New-Item -Force -Path $release_package_target_dir -ItemType Directory
+Compress-Archive -Path $plugin_target_dir\* -CompressionLevel Fastest -DestinationPath $release_package_abspath
