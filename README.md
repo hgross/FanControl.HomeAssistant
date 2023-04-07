@@ -1,6 +1,9 @@
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/HenningGross)
 
 # FanControl.HomeAssistant
+[![dotnet package](https://github.com/hgross/FanControl.HomeAssistant/actions/workflows/pipeline.yml/badge.svg)](https://github.com/hgross/FanControl.HomeAssistant/actions/workflows/pipeline.yml) 
+![GitHub all releases](https://img.shields.io/github/downloads/hgross/FanControl.HomeAssistant/total)
+
 [FanControl](https://github.com/Rem0o/FanControl.Releases)-Plugin for [HomeAssistant](https://www.home-assistant.io/) sensors.
 
 - Integrates HomeAssistant temperature sensors into FanControl
