@@ -8,7 +8,7 @@ $lib_folder = ".\lib"
 $fc_folder = ".\devbuild\FanControl"
 
 # ensure folders
-New-Item -Force -Path $unzip_dest_folder -ItemType Directory
+New-Item -Force -Path $lib_folder -ItemType Directory
 New-Item -Force -Path $dl_folder -ItemType Directory
 New-Item -Force -Path $temp_unzip_folder -ItemType Directory
 New-Item -Force -Path $fc_folder -ItemType Directory

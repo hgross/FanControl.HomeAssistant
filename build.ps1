@@ -9,7 +9,7 @@ $fc_release_input_dir = ".\devbuild\FanControl"
 ##  Clean
 ############
 dotnet clean
-Remove-Item ".\out" -Recurse -Force
+Remove-Item ".\out" -Recurse -Force -ErrorAction SilentlyContinue
 
 ############
 ##  Build dev release
