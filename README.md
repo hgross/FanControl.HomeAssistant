@@ -43,17 +43,17 @@ The default configuration file will look like this
 
 |Config entry|Description|
 |-|-|
-|HomeAssistantAuthToken (mandatory)|The auth token used to retrieve sensor data. Create one from the [HomeAssistant UI](https://www.home-assistant.io/docs/authentication/#your-account-profile)|
-|HomeAssistantURL (mandatory)|The Home Assistant URL of your installation including protocol and port.|
-|sensors|A list of home assistant (temperature) sensors that you want to have accessible within FanControl. Check how to define a sensors below.|
+|`HomeAssistantAuthToken` (mandatory)|The auth token used to retrieve sensor data. Create one from the [HomeAssistant UI](https://www.home-assistant.io/docs/authentication/#your-account-profile)|
+|`HomeAssistantURL` (mandatory)|The Home Assistant URL of your installation including protocol and port.|
+|`sensors`|A list of home assistant (temperature) sensors that you want to have accessible within FanControl. Check how to define a sensors below.|
 
 Sensors can be configured with these attribtues
 
 |Sensor Config entry|Description|Default|
 |-|-|-|
-|EntityId (mandatory)|The home assistant entity id to resolve. Must be a tempearture sensor.|-|
-|PollingInterval (optional)|The interval in seconds to poll data from HomeAssistant.|30|
-|InitialFallbackValue (optional)|An initial value that is used to initialize the sensor. Will be overridden on first successful retrieval from HomeAssistant. Note that this value is used when home assistant is down or can't be reached initially.|20|
+|`EntityId` (mandatory)|The home assistant entity id to resolve. Must be a tempearture sensor.|-|
+|`PollingInterval` (optional)|The interval in seconds to poll data from HomeAssistant.|30|
+|`InitialFallbackValue` (optional)|An initial value that is used to initialize the sensor. Will be overridden on first successful retrieval from HomeAssistant. Note that this value is used when home assistant is down or can't be reached initially.|20|
 
 ## Development
 See [development docs](./DEVELOPMENT.md)
