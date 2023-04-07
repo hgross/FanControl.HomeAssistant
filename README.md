@@ -50,6 +50,8 @@ The default configuration file will look like this
 }
 ```
 
+After each configuration change, you have to restart FanControl for your changes to have any effect.
+
 |Config entry|Description|
 |-|-|
 |`HomeAssistantAuthToken` (mandatory)|The auth token used to retrieve sensor data. Create one from the [HomeAssistant UI](https://www.home-assistant.io/docs/authentication/#your-account-profile)|
@@ -71,6 +73,7 @@ Sensors can be configured with these attribtues
 |-|-|-|
 |`Failed to load plugin FanControl.HomeAssistant.dll. Make sure the plugin's dll is unblocked in its properties.`<br/><br/> <img src="./doc/assets/FanControl.HomeAssistant_Trouble_DLL1.png" width="300" /> | <img src="./doc/assets/FanControl.HomeAssistant_Trouble_DLL2.png" width="300" />| Right click all DLL's in FanControl's `Plugins`-directory and allow access by checking the box visible in the screenshot to the left |
 |My sensor is not updating.| <img src="./doc/assets/FanControl.HomeAssistant_Trouble_Entities.png" width="300" /> | Make sure you have configured the Auth Token and sensors in the `FanControl.HomeAssistant.json` file within FanControl's `Configurations` directory according to the documentation above. Check FanControl's error log for hints. |
+|I edited the `FanControl.HomeAssistat.json` without effect. ||After each change, you have to restart FanControl for your changes to have any effect.|
 
 
 
