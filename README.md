@@ -25,6 +25,12 @@
 
 ## Installation
 Download the latest release and drop the `.dll`- files into FanControl's `Plugins` folder.
+<p float="left">
+  <a href="./doc/assets/FanControl.HomeAssistant_plugin_install.gif">
+    <img src="./doc/assets/FanControl.HomeAssistant_plugin_install.gif" width="600" />
+  </a>
+</p>
+
 
 ## Configuration
 The Plugin Expects a file `FanControl.HomeAssistant.json` within FanControl's `Configurations` directory (next to your default `userConfig.json`).
