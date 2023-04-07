@@ -64,5 +64,15 @@ Sensors can be configured with these attribtues
 |`PollingInterval` (optional)|The interval in seconds to poll data from HomeAssistant.|30|
 |`InitialFallbackValue` (optional)|An initial value that is used to initialize the sensor. Will be overridden on first successful retrieval from HomeAssistant. Note that this value is used when home assistant is down or can't be reached initially.|20|
 
+
+## Troubleshooting
+
+|Error|Solution||
+|-|-|-|
+|`Failed to load plugin FanControl.HomeAssistant.dll. Make sure the plugin's dll is unblocked in its properties.`<br/><br/> <img src="./doc/assets/FanControl.HomeAssistant_Trouble_DLL1.png" width="300" /> | <img src="./doc/assets/FanControl.HomeAssistant_Trouble_DLL2.png" width="300" />| Right click all DLL's in FanControl's `Plugins`-directory and allow access by checking the box visible in the screenshot to the left |
+|My sensor is not updating.| <img src="./doc/assets/FanControl.HomeAssistant_Trouble_Entities.png" width="300" /> | Make sure you have configured the Auth Token and sensors in the `FanControl.HomeAssistant.json` file within FanControl's `Configurations` directory according to the documentation above. Check FanControl's error log for hints. |
+
+
+
 ## Development
 See [development docs](./DEVELOPMENT.md)
