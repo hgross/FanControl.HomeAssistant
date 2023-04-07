@@ -1,30 +1,34 @@
 ﻿using FanControl.Plugins;
 using RestSharp;
-using RestSharp.Authenticators;
-using RestSharp.Serializers;
 using Newtonsoft.Json;
 
 namespace FanControl.HomeAssistant
 {
+    /// <summary>
+    /// HASS implementation of  a sensor. 
+    /// Periodically polls the state of a sensor entity from Home Assistant.
+    /// </summary>
     public class HomeAssistantSensor : IPluginSensor
     {
         private HomeAssistantConfig _hassConfig;
+        private HomeAssistantSensorConfig _hassSensorConfig;
         private IPluginLogger _logger;
-        private int _pollingInterval;
-        private long cycle = 0;
+        private long _cycle = 0;
 
-        internal HomeAssistantSensor(string id, HomeAssistantConfig hassConfig, IPluginLogger logger, int pollingInterval = 30)
+        internal HomeAssistantSensor(HomeAssistantSensorConfig hassSensorConfig, HomeAssistantConfig hassConfig, IPluginLogger logger)
         {
-            Id = id;
-            Name = id; // temporary, will be overwritten on first update
             _hassConfig = hassConfig;
+            _hassSensorConfig = hassSensorConfig;
             _logger = logger;
-            _pollingInterval = pollingInterval;
 
-            if (pollingInterval < 1)
+            Id = _hassSensorConfig.EntityId;
+            Name = _hassSensorConfig.EntityId; ; // temporary, will be overwritten on first update
+            Value = _hassSensorConfig.InitialFallbackValue; // initial value to avoid NaN
+
+            if (_hassSensorConfig.PollingInterval < 1)
             {
-                _logger.Log($"Error: Configured polling interval of {pollingInterval} seconds for sensor {id} is invalid. Falling back to default value.");
-                pollingInterval = 30;
+                _logger.Log(HomeAssistantPlugin.LOG_PREFIX + $"Error: Configured polling interval of {_hassSensorConfig.PollingInterval} seconds for sensor {_hassSensorConfig.EntityId} is invalid. Falling back to default value of {HomeAssistantSensorConfig.POLLING_INTERVAL_DEFAULT}.");
+                _hassSensorConfig.PollingInterval = HomeAssistantSensorConfig.POLLING_INTERVAL_DEFAULT;
             }
         }
 
@@ -38,10 +42,10 @@ namespace FanControl.HomeAssistant
         public void Update()
         {
             // called in 1 hz cycles by FC
-            cycle += 1;
+            _cycle += 1;
 
-            // only update every _pollingIntevall-th cycle
-            if (cycle % _pollingInterval != 0)
+            // only update every pollingIntevall-th cycle
+            if (_cycle % _hassSensorConfig.PollingInterval != 0)
             {
                 return;
             }
@@ -49,7 +53,9 @@ namespace FanControl.HomeAssistant
             _poll_data();
         }
 
-
+        /// <summary>
+        /// HomeAssistant REST API Response structure 
+        /// </summary>
         private class HassEntityAttributes
         {
             public string state_class { get; set; }
@@ -59,90 +65,84 @@ namespace FanControl.HomeAssistant
             public string friendly_name { get; set; }
         }
 
+        /// <summary>
+        /// HomeAssistant REST API Response structure 
+        /// </summary>
         private class HassTemperatureSesnorResponse
         {
-
             public float state { get; set; }
-
-
             public string entity_id { get; set; }
-
-
             public string last_changed { get; set; }
-
-
             public string last_updated { get; set; }
-
             public HassEntityAttributes attributes { get; set; }
-
-
             public override string ToString()
             {
                 return $"SensorData for {this.attributes.friendly_name} ({this.entity_id}): {this.state} {this.attributes.unit_of_measurement}";
             }
         }
 
-
+        /// <summary>
+        /// Asynchronously fetches the state of the entity id from the HomeAssistant REST API.
+        /// </summary>
+        /// <returns></returns>
         private async void _poll_data()
         {
             try
             {
-                //_logger.Log($"Updating {Id} ...");
+                // Expected format is this
+                /*  HTTP/1.1 200 OK
+                    Content-Type: application/json
+                    Content-Length: 265
+                    Content-Encoding: deflate
+                    Date: Thu, 06 Apr 2023 20:35:28 GMT
+                    Server: Python/3.10 aiohttp/3.8.4
+                    Connection: close
 
-                // Expected format is
-                /*                 HTTP/1.1 200 OK
-                                Content-Type: application/json
-                                Content-Length: 265
-                                Content-Encoding: deflate
-                                Date: Thu, 06 Apr 2023 20:35:28 GMT
-                                Server: Python/3.10 aiohttp/3.8.4
-                                Connection: close
-
-                                {
-                                    "entity_id": "sensor.office_hue_motion_temperature",
-                                    "state": "21.2",
-                                    "attributes": {
-                                        "state_class": "measurement",
-                                        "temperature_valid": true,
-                                        "unit_of_measurement": "°C",
-                                        "device_class": "temperature",
-                                        "friendly_name": "Sensor Office Temperature"
-                                    },
-                                    "last_changed": "2023-04-06T20:27:27.542739+00:00",
-                                    "last_updated": "2023-04-06T20:27:27.542739+00:00",
-                                    "context": {
-                                        "id": "01GXC41CDPMV245AW4X5ADKF4X",
-                                        "parent_id": null,
-                                        "user_id": null
-                                    }
-                                }
+                    {
+                        "entity_id": "sensor.office_hue_motion_temperature",
+                        "state": "21.2",
+                        "attributes": {
+                            "state_class": "measurement",
+                            "temperature_valid": true,
+                            "unit_of_measurement": "°C",
+                            "device_class": "temperature",
+                            "friendly_name": "Sensor Office Temperature"
+                        },
+                        "last_changed": "2023-04-06T20:27:27.542739+00:00",
+                        "last_updated": "2023-04-06T20:27:27.542739+00:00",
+                        "context": {
+                            "id": "01GXC41CDPMV245AW4X5ADKF4X",
+                            "parent_id": null,
+                            "user_id": null
+                        }
+                    }
                  */
 
-                var client = new RestClient(_hassConfig.HassURL);
-                client.AddDefaultHeader("Authorization", "Bearer " + _hassConfig.HassAuthToken);
+                // get the state from the REST API
+                var client = new RestClient(_hassConfig.HomeAssistantURL);
+                client.AddDefaultHeader("Authorization", "Bearer " + _hassConfig.HomeAssistantAuthToken);
                 var request = new RestRequest("api/states/{EntityId}", Method.Get);
                 request.AddUrlSegment("EntityId", Id);
                 var response = await client.ExecuteAsync(request);
                 var resp_code = (int)response.StatusCode;
 
+                // Handle response based on code.
                 if (resp_code == 200)
                 {
                     string rawResponse = response.Content;
                     HassTemperatureSesnorResponse sensorData = JsonConvert.DeserializeObject<HassTemperatureSesnorResponse>(rawResponse);
-                    //_logger.Log("Received sensor data: " + sensorData.ToString());
                     Value = sensorData.state;
                 }
                 else
                 {
                     // todo: maybe some error logic for 404s / invalid configs. Nice to have.
-                    _logger.Log($"Error retrieving state for sensor {Id} with status code {resp_code}");
+                    _logger.Log(HomeAssistantPlugin.LOG_PREFIX + $"Error retrieving state for sensor {Id} with status code {resp_code}");
                 }
-                //_logger.Log($"{response}");
             }
             catch (System.Exception e)
             {
-                _logger.Log($"Error polling state of {Id} -> {e.Message}");
-                _logger.Log("" + e.StackTrace);
+                _logger.Log(HomeAssistantPlugin.LOG_PREFIX + $"Error polling state of {Id} -> {e.Message}");
+                _logger.Log(HomeAssistantPlugin.LOG_PREFIX + e.StackTrace);
             }
 
         }
