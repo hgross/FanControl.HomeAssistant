@@ -24,7 +24,7 @@
 </p>
 
 ## Installation
-Download the latest release and drop the `.dll`- files into FanControl's `Plugins` folder.
+Download the latest release and drop the `.dll`- files into FanControl's `Plugins` folder. Make sure to have the latest [FanControl](https://github.com/Rem0o/FanControl.Releases) release installed.
 <p float="left">
   <a href="./doc/assets/FanControl.HomeAssistant_plugin_install.gif">
     <img src="./doc/assets/FanControl.HomeAssistant_plugin_install.gif" width="600" />
