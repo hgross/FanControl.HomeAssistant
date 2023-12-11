@@ -1,6 +1,6 @@
 ﻿using FanControl.Plugins;
-using RestSharp;
 using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace FanControl.HomeAssistant
 {
@@ -14,6 +14,7 @@ namespace FanControl.HomeAssistant
         private HomeAssistantSensorConfig _hassSensorConfig;
         private IPluginLogger _logger;
         private long _cycle = 0;
+        private HttpClient _httpClient;
 
         internal HomeAssistantSensor(HomeAssistantSensorConfig hassSensorConfig, HomeAssistantConfig hassConfig, IPluginLogger logger)
         {
@@ -30,6 +31,10 @@ namespace FanControl.HomeAssistant
                 _logger.Log(HomeAssistantPlugin.LOG_PREFIX + $"Error: Configured polling interval of {_hassSensorConfig.PollingInterval} seconds for sensor {_hassSensorConfig.EntityId} is invalid. Falling back to default value of {HomeAssistantSensorConfig.POLLING_INTERVAL_DEFAULT}.");
                 _hassSensorConfig.PollingInterval = HomeAssistantSensorConfig.POLLING_INTERVAL_DEFAULT;
             }
+
+            _httpClient = new HttpClient();
+            _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + _hassConfig.HomeAssistantAuthToken);
+            _httpClient.BaseAddress = new System.Uri(_hassConfig.HomeAssistantURL);
         }
 
         public string Name { get; }
@@ -68,7 +73,7 @@ namespace FanControl.HomeAssistant
         /// <summary>
         /// HomeAssistant REST API Response structure 
         /// </summary>
-        private class HassTemperatureSesnorResponse
+        private class HassTemperatureSensorResponse
         {
             public float state { get; set; }
             public string entity_id { get; set; }
@@ -117,19 +122,14 @@ namespace FanControl.HomeAssistant
                     }
                  */
 
-                // get the state from the REST API
-                var client = new RestClient(_hassConfig.HomeAssistantURL);
-                client.AddDefaultHeader("Authorization", "Bearer " + _hassConfig.HomeAssistantAuthToken);
-                var request = new RestRequest("api/states/{EntityId}", Method.Get);
-                request.AddUrlSegment("EntityId", Id);
-                var response = await client.ExecuteAsync(request);
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/states/{Id}");
                 var resp_code = (int)response.StatusCode;
 
                 // Handle response based on code.
                 if (resp_code == 200)
                 {
-                    string rawResponse = response.Content;
-                    HassTemperatureSesnorResponse sensorData = JsonConvert.DeserializeObject<HassTemperatureSesnorResponse>(rawResponse);
+                    string rawResponse = await response.Content.ReadAsStringAsync();
+                    HassTemperatureSensorResponse sensorData = JsonConvert.DeserializeObject<HassTemperatureSensorResponse>(rawResponse);
                     Value = sensorData.state;
                 }
                 else
@@ -141,7 +141,7 @@ namespace FanControl.HomeAssistant
             catch (System.Exception e)
             {
                 _logger.Log(HomeAssistantPlugin.LOG_PREFIX + $"Error polling state of {Id} -> {e.Message}");
-                _logger.Log(HomeAssistantPlugin.LOG_PREFIX + e.StackTrace);
+                _logger.Log(HomeAssistantPlugin.LOG_PREFIX + e.ToString());
             }
 
         }
