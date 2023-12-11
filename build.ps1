@@ -43,7 +43,7 @@ Copy-Item $assembly_path_release -Destination $plugin_target_dir -Recurse -Force
 # Determine package name
 $gitHash = (git rev-parse --short HEAD)
 $gitTag = (git describe --exact-match --tags 2>&1)
-if($gitTag) {
+if(($LASTEXITCODE -eq 0) -and $gitTag) {
     $version = $gitTag;
 } else {
     $version = $gitHash;
