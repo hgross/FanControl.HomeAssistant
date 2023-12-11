@@ -43,9 +43,10 @@ namespace FanControl.HomeAssistant
         {
             // called in 1 hz cycles by FC
             _cycle += 1;
+            bool is_first_cycle = _cycle == 1;
 
             // only update every pollingIntevall-th cycle
-            if (_cycle % _hassSensorConfig.PollingInterval != 0)
+            if (!is_first_cycle && (_cycle % _hassSensorConfig.PollingInterval != 0))
             {
                 return;
             }
@@ -59,7 +60,6 @@ namespace FanControl.HomeAssistant
         private class HassEntityAttributes
         {
             public string state_class { get; set; }
-            public string temperature_valid { get; set; }
             public string unit_of_measurement { get; set; }
             public string device_class { get; set; }
             public string friendly_name { get; set; }
@@ -103,7 +103,6 @@ namespace FanControl.HomeAssistant
                         "state": "21.2",
                         "attributes": {
                             "state_class": "measurement",
-                            "temperature_valid": true,
                             "unit_of_measurement": "°C",
                             "device_class": "temperature",
                             "friendly_name": "Sensor Office Temperature"
