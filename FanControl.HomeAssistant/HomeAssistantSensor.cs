@@ -28,7 +28,7 @@ namespace FanControl.HomeAssistant
 
             if (_hassSensorConfig.PollingInterval < 1)
             {
-                _logger.Log(HomeAssistantPlugin.LOG_PREFIX + $"Error: Configured polling interval of {_hassSensorConfig.PollingInterval} seconds for sensor {_hassSensorConfig.EntityId} is invalid. Falling back to default value of {HomeAssistantSensorConfig.POLLING_INTERVAL_DEFAULT}.");
+                Log($"Error: Configured polling interval of {_hassSensorConfig.PollingInterval} seconds for sensor {_hassSensorConfig.EntityId} is invalid. Falling back to default value of {HomeAssistantSensorConfig.POLLING_INTERVAL_DEFAULT}.");
                 _hassSensorConfig.PollingInterval = HomeAssistantSensorConfig.POLLING_INTERVAL_DEFAULT;
             }
 
@@ -135,15 +135,38 @@ namespace FanControl.HomeAssistant
                 else
                 {
                     // todo: maybe some error logic for 404s / invalid configs. Nice to have.
-                    _logger.Log(HomeAssistantPlugin.LOG_PREFIX + $"Error retrieving state for sensor {Id} with status code {resp_code}");
+                    Log($"Error retrieving state for sensor {Id} with status code {resp_code}");
                 }
             }
             catch (System.Exception e)
             {
-                _logger.Log(HomeAssistantPlugin.LOG_PREFIX + $"Error polling state of {Id} -> {e.Message}");
-                _logger.Log(HomeAssistantPlugin.LOG_PREFIX + e.ToString());
+                try
+                {
+                    Log($"Error polling state of {Id} -> {e.Message}" + System.Environment.NewLine + e.ToString());
+                }
+                catch (System.Exception)
+                {
+                    // ignore, FanControl V176+ does not handle multiple log messages in one cycle very well (file locks).
+                }
             }
 
+        }
+
+        /// <summary>
+        /// Logs exceptions to FanControl's log file.
+        /// Sucks up any exceptions that might occur during logging, since FanControl V176+ does not handle multiple log messages in one cycle very well (file locks).
+        /// </summary>
+        /// <param name="msg">The log message</param>
+        private void Log(string msg)
+        {
+            try
+            {
+                _logger.Log(HomeAssistantPlugin.LOG_PREFIX + msg);
+            }
+            catch (System.Exception)
+            {
+                // ignore, FanControl V176+ does not handle multiple log messages in one cycle very well (file locks).
+            }
         }
     }
 }

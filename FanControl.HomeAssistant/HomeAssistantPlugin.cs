@@ -49,7 +49,7 @@ namespace FanControl.HomeAssistant
                 
                 // log & show dialog
                 var error_message = $"Error: Could not find a config file for the FanControl.HomeAssistant plugin at {config_directory_path}. Creating {config_json_path}. Please edit it to your needs and restart FanControl.";
-                _logger.Log(LOG_PREFIX + error_message);
+                Log(error_message);
                 _dialog.ShowMessageDialog(error_message);
             } 
 
@@ -65,9 +65,7 @@ namespace FanControl.HomeAssistant
             catch (System.Exception e)
             {
                 var error_message = $"Error: Could not parse configuration for the FanControl.HomeAssistant plugin at {config_json_path}. Please edit it to be valid and restart FanControl. You can delete {config_json_path} and restart FanControl to get back the default config.";
-                _logger.Log(LOG_PREFIX + error_message);
-                _logger.Log(LOG_PREFIX + "Not loading any FanControl.HomeAssistant sensors.");
-                _logger.Log(LOG_PREFIX + $"Parsing exception hint: {e.Message}" + Environment.NewLine + e.StackTrace);
+                Log(error_message + Environment.NewLine + "Not loading any FanControl.HomeAssistant sensors." + Environment.NewLine + $"Parsing exception hint: {e.Message}" + Environment.NewLine + e.StackTrace);
                 _dialog.ShowMessageDialog(error_message);
             }
         }
@@ -91,6 +89,23 @@ namespace FanControl.HomeAssistant
         public void Update()
         {
             // unused - implemented in the individual sensor instances
+        }
+
+        /// <summary>
+        /// Logs exceptions to FanControl's log file.
+        /// Sucks up any exceptions that might occur during logging, since FanControl V176+ does not handle multiple log messages in one cycle very well (file locks).
+        /// </summary>
+        /// <param name="msg">The log message</param>
+        private void Log(string msg)
+        {
+            try
+            {
+                _logger.Log(LOG_PREFIX + msg);
+            }
+            catch (System.Exception)
+            {
+                // ignore, FanControl V176+ does not handle multiple log messages in one cycle very well (file locks).
+            }
         }
     }
 
